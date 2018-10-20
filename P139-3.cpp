@@ -20,7 +20,7 @@ void pickfrom(int *Num, int i,int n) {
 	for (int p = 0; p < n - 1; ++p)
 		Num[p] = temp[p];
 }
-bool check(stack <int> leftstk, stack <int> downstk)
+bool check(stack <int> leftstk, stack <int> downstk) //检测此结果是否可以实现
 {
 	if (leftstk.empty() == true)
 		return true;
@@ -71,10 +71,10 @@ int main()
 	int i, j, k;
 	for (i = 0; i < n; ++i)
 		Num[i] = i;
-	for (i = 0; i < n; ++i)
+	/*for (i = 0; i < n; ++i)
 	{
 		leftstk.push(n-i);
-	}
+	}*/
 	coutall(n, leftstk, Num);
 	return 0;
 }
