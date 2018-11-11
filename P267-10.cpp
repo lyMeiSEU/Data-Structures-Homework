@@ -1,135 +1,207 @@
-#include<stdlib.h>
-#include<malloc.h>
-#include<iostream>
+#include <iostream>
 #include<stack>
 using namespace std;
-
 template<class T>
-struct bitree {//二叉树的节点
-	T data;
-	struct bitree<T> *lchild, *rchild;
-};
-
-template<class T>
-class ertree {
-
+class BTree
+{
 public:
-	//用递归的方式来建立二叉树
-	bitree<T> *TreeBuilder() {//建立二叉树
-		bitree<T> *t;
-		T a;
-		cin >> a;
-		if (a == 0)t = NULL;
-		else {
-			t = (bitree<T> *)malloc(sizeof(bitree<T>));
-			t->data = a;
-			cout << "Enter " << t->data << "'s Left child ";
-			t->lchild = TreeBuilder();
-			cout << "Enter " << t->data << "'s Right child ";
-			t->rchild = TreeBuilder();
-		}
-		return t;
-	}
-	virtual void Order(bitree<T> *p) = 0;
-
-	//递归的调用方式求解结点数
-	int NodesNumber(bitree<T> *p) {//结点数
-		int c;
-		if (p == NULL)
-			c = 0;
-		else
-			c = 1 + NodesNumber(p->lchild) + NodesNumber(p->rchild);
-		return c;
-	}
-
-	//递归的调用方式求解叶子结点数
-	int LeavesNumber(bitree<T> *p, int d1) {//叶子结点数
-		if (p == NULL)
-			return d1;
-		else {
-			if (p->lchild == NULL && p->rchild == NULL)
-				d1++;
-			LeavesNumber(p->lchild, d1);
-			LeavesNumber(p->rchild, d1);
-		}
-	}
-
-	//求深度时调用该函数
-	int max(int m, int n)//比较大小
+	class Node
 	{
-		if (m > n)
-			return m;
-		else
-			return n;
-	}
+	public:
+		T element;//Can be optimized
+		Node *LTree;
+		Node *RTree;
+	};
+	Node *root;
+	bool creat(Node *&root);
+	virtual void show(Node *root)const;//Read Only
+	bool B_Delete(Node *&root);
 
-	//递归的调用方式求解叶子结点数
-	int height(bitree<T> *p) {//二叉树的高度
-		if (p != NULL) {
-			return (1 + max(height(p->lchild), height(p->rchild)));
-		}
-		else return 0;
-	}
+	BTree();
+	~BTree();
+	void BTShow();
+	bool BTCreat();
+	void BTDelete();
 };
-
-template <class T>
-class PreOrderTree :public ertree<T> {
-	void Order(bitree<T> *p) {
-		if (p != NULL) {
-			Order(p->lchild);
-			Order(p->rchild);
-			cout << p->data << ' ';
-		}
-	}
-};
-
-template <class T>
-class InOrderTree :public ertree<T> {
-	void Order(bitree<T> *p) {
-		if (p != NULL) {
-			Order(p->lchild);
-			cout << p->data << ' ';
-			Order(p->rchild);
-		}
-	}
-};
-
-template <class T>
-class PostOrderTree :public ertree<T> {
-	void Order(bitree<T> *p) {
-		if (p != NULL) {
-			Order(p->lchild);
-			Order(p->rchild);
-			cout << p->data << ' ';
-		}
-	}
-};
-
-template <class T>
-class LevelOrderTree :public ertree<T> {
-	void Order(bitree<T> *p) {
-		stack<T> s;
-		while (p != NULL || s.size() != 0)
+template<class T>
+BTree<T>::BTree()
+{
+	root = NULL;
+}
+template<class T>
+BTree<T>::~BTree()
+{
+	B_Delete(root);
+}
+template<class T>
+bool BTree<T>::BTCreat()
+{
+	if (creat(root));
+	return true;
+	return false;
+}
+template<class T>
+void BTree<T>::BTDelete()
+{
+	B_Delete(root);
+}
+template<class T>
+bool BTree<T>::creat(Node *&root)
+{
+	T tempaval;
+	cin >> tempaval;
+	if (tempaval != '#')
+	{
+		root = new Node;
+		if (!root)
 		{
-			while (p != NULL) {
-				s.push(p);
-				if (p->lchild == NULL && p->rchild == NULL) {
-					cout << s.top()->Data << " ";
-				}
-				p = p->lchild;
-			}
-			if (s.size() != 0)
-			{
-				p = s.top();
-				s.pop();
-				p = p->rchild;
-			}
+			root = NULL;
+			return false;
 		}
+		root->element = tempaval;
+		if (!creat(root->LTree))
+			root->LTree = NULL;
+		if (!creat(root->RTree))
+			root->RTree = NULL;
 	}
+	else
+		return false;
+	return true;
+}
+
+template<class T>
+void BTree<T>::show(Node *root)const {
+	if (root)
+	{
+		cout << root->element << ends;
+		show(root->LTree);
+		show(root->RTree);
+	}
+	else
+		return;
+}
+
+template<class T>
+bool BTree<T>::B_Delete(Node *&root)
+{
+	if (root)
+	{
+		B_Delete(root->LTree);
+		B_Delete(root->RTree);
+		cout << root->element << ends;
+		delete root;
+		return true;
+	}
+	else
+		return false;
+}
+template<class T>
+void BTree<T>::BTShow()
+{
+	show(root);
+}
+
+template<class T>
+class PreOrderBTree :public BTree<T> {
+	void show(Node *root)const;
 };
 
-void main() {
-	PreOrderTree<int> pretree;
-	cout << "Enter nodes. Enter 0 if you Want to Stop Buliding Tree.(Enter 0 to Stop Entering any branch." << endl;
-	pretree.TreeBuilder();
+template<class T>
+void PreOrderBTree<T>::show(Node *root)const {
+	if (root)
+	{
+		cout << root->element << ends;
+		show(root->LTree);
+		show(root->RTree);
+	}
+	else
+		return;
+}
+
+template<class T>
+class InOrderBTree :public BTree<T> {
+	void show(Node *root)const;
+};
+
+template<class T>
+void InOrderBTree<T>::show(Node *root)const {
+	if (root)
+	{
+		show(root->LTree);
+		cout << root->element << ends;
+		show(root->RTree);
+	}
+	else
+		return;
+}
+
+template<class T>
+class PostOrderBTree :public BTree<T> {
+	void show(Node *root)const;
+};
+
+template<class T>
+void PostOrderBTree<T>::show(Node *root)const {
+	if (root)
+	{
+		show(root->LTree);
+		show(root->RTree);
+		cout << root->element << ends;
+	}
+	else
+		return;
+}
+
+template<class T>
+class LevelOrderBTree :public BTree<T> {
+	void show(Node *root)const;
+};
+
+template<class T>
+void LevelOrderBTree<T>::show(Node *root)const {
+	Node *p = root;
+	stack<Node *> s;
+	if (p == NULL)
+	{
+		cout << "This is a Empty Tree" << endl;
+		return;
+	}
+	while (p != NULL || s.size() != 0)
+	{
+		while (p != NULL)
+		{
+			s.push(p);
+			if (p->LTree == NULL && p->RTree == NULL)
+			{
+				cout << s.top()->element << " ";
+			}
+			p = p->LTree;
+		}
+		if (s.size() != 0)
+		{
+			p = s.top();
+			s.pop();
+			p = p->RTree;
+		}
+
+	}
+	cout << endl;
+}
+int main()
+{
+	BTree<char> temp;
+	PreOrderBTree<char> temp1;
+	InOrderBTree<char> temp2;
+	PostOrderBTree<char> temp3;
+	LevelOrderBTree<char> temp4;
+	temp1.BTCreat();
+	temp1.BTShow();
+	temp2.BTCreat();
+	temp2.BTShow();
+	temp3.BTCreat();
+	temp3.BTShow();
+	temp4.BTCreat();
+	temp4.BTShow();
+	cout << "Hello world!" << endl;
+	return 0;
 }
