@@ -1,6 +1,7 @@
-#include<stdlib.h>//头文件给类的建立提供支持
+#include<stdlib.h>
 #include<malloc.h>
 #include<iostream>
+#include<stack>
 using namespace std;
 
 template<class T>
@@ -13,28 +14,26 @@ template<class T>
 class ertree {
 
 public:
-
 	//用递归的方式来建立二叉树
-	bitree *TreeBuilder() {//建立二叉树
-		bitree *t;
+	bitree<T> *TreeBuilder() {//建立二叉树
+		bitree<T> *t;
 		T a;
-		cout << "输入元素";
 		cin >> a;
 		if (a == 0)t = NULL;
 		else {
-			t = (bitree *)malloc(sizeof(bitree));
+			t = (bitree<T> *)malloc(sizeof(bitree<T>));
 			t->data = a;
-			cout << t->data << "的左子树";
+			cout << "Enter " << t->data << "'s Left child ";
 			t->lchild = TreeBuilder();
-			cout << t->data << "的右子树";
+			cout << "Enter " << t->data << "'s Right child ";
 			t->rchild = TreeBuilder();
 		}
 		return t;
 	}
-	virtual void Order(bitree *p) = 0;
+	virtual void Order(bitree<T> *p) = 0;
 
 	//递归的调用方式求解结点数
-	int NodesNumber(bitree *p) {//结点数
+	int NodesNumber(bitree<T> *p) {//结点数
 		int c;
 		if (p == NULL)
 			c = 0;
@@ -44,7 +43,7 @@ public:
 	}
 
 	//递归的调用方式求解叶子结点数
-	int LeavesNumber(bitree *p, int d1) {//叶子结点数
+	int LeavesNumber(bitree<T> *p, int d1) {//叶子结点数
 		if (p == NULL)
 			return d1;
 		else {
@@ -65,7 +64,7 @@ public:
 	}
 
 	//递归的调用方式求解叶子结点数
-	int height(bitree *p) {//二叉树的高度
+	int height(bitree<T> *p) {//二叉树的高度
 		if (p != NULL) {
 			return (1 + max(height(p->lchild), height(p->rchild)));
 		}
@@ -75,10 +74,10 @@ public:
 
 template <class T>
 class PreOrderTree :public ertree<T> {
-	void Order(bitree *p) {
+	void Order(bitree<T> *p) {
 		if (p != NULL) {
-			PostOrder(p->lchild);
-			PostOrder(p->rchild);
+			Order(p->lchild);
+			Order(p->rchild);
 			cout << p->data << ' ';
 		}
 	}
@@ -86,21 +85,21 @@ class PreOrderTree :public ertree<T> {
 
 template <class T>
 class InOrderTree :public ertree<T> {
-	void Order(bitree *p) {
+	void Order(bitree<T> *p) {
 		if (p != NULL) {
-			InOrder(p->lchild);
+			Order(p->lchild);
 			cout << p->data << ' ';
-			InOrder(p->rchild);
+			Order(p->rchild);
 		}
 	}
 };
 
 template <class T>
-class PostOrderTree :public ertree {
-	void Order(bitree *p) {
+class PostOrderTree :public ertree<T> {
+	void Order(bitree<T> *p) {
 		if (p != NULL) {
-			PostOrder(p->lchild);
-			PostOrder(p->rchild);
+			Order(p->lchild);
+			Order(p->rchild);
 			cout << p->data << ' ';
 		}
 	}
@@ -108,8 +107,8 @@ class PostOrderTree :public ertree {
 
 template <class T>
 class LevelOrderTree :public ertree<T> {
-	void Order(bitree *p) {
-		stack<node>s;
+	void Order(bitree<T> *p) {
+		stack<T> s;
 		while (p != NULL || s.size() != 0)
 		{
 			while (p != NULL) {
@@ -129,7 +128,8 @@ class LevelOrderTree :public ertree<T> {
 	}
 };
 
-//主函数中实例化对象，然后完成操作
 void main() {
-
+	PreOrderTree<int> pretree;
+	cout << "Enter nodes. Enter 0 if you Want to Stop Buliding Tree.(Enter 0 to Stop Entering any branch." << endl;
+	pretree.TreeBuilder();
 }
