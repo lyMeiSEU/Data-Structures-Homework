@@ -15,22 +15,18 @@ struct  TreeNode
 	BinTree Right;
 };
 
-BinTree NodeInserter(BinTree in) {
+void NodeInserter(BinTree in) {
 	if (in) {
-		if (in->father->Data < in->Data) {
-			BinTree tmp = (BinTree)malloc(sizeof(struct TreeNode));
-			tmp = in;
-			in = in->father;
-			tmp->father = tmp;
-			NodeInserter(in);
+		while (in->father->Data < in->Data)
+		{
+			ElementType tmp = in->Data;
+			in->Data = in->father->Data;
+			in->father->Data = tmp;
 		}
-		return in;
 	}
-	else
-		return NULL;
 }
-static int n=0;
-BinTree InOrderTraversal(BinTree BT) {
+static int n = 0;
+BinTree LevelOrderTraversal(BinTree BT) {
 	BinTree T = BT;
 	stack<BinTree>s;
 	while (T != NULL || s.size() != 0)
@@ -50,13 +46,13 @@ BinTree InOrderTraversal(BinTree BT) {
 	return BT;
 }
 
-BinTree TreeBulider(int now, int N,BinTree father,BinTree &last) {
+BinTree TreeBulider(int now, int N, BinTree father, BinTree &last) {
 	if (now <= N) {
 		BinTree tmp = (BinTree)malloc(sizeof(struct TreeNode));
 		tmp->Data = N - now + 1;
 		tmp->father = father;
-		tmp->Left = TreeBulider(2 * now, N,tmp,last);
-		tmp->Right = TreeBulider(2 * now + 1, N, tmp,last);
+		tmp->Left = TreeBulider(2 * now, N, tmp, last);
+		tmp->Right = TreeBulider(2 * now + 1, N, tmp, last);
 		if (now == N)
 		{
 			last = tmp;
@@ -80,18 +76,23 @@ int main() {
 									 4  5 6  7
 									...........
 									   */
-	BT = TreeBulider(1, N,BT,last);
-	InOrderTraversal(BT);
+	BT = TreeBulider(1, N, BT, last);
+	cout << "Traveling the tree with LevelOrder..." << endl;
+	cout << "The tree is: " << endl;
+	LevelOrderTraversal(BT);
 	int S;
+	cout << endl;
 	cout << "Input the Node you want to Insert" << endl;
 	cin >> S;
-	cout << "Building Node..." << endl;
+	cout << "Adding Node..." << endl;
 	BinTree in = (BinTree)malloc(sizeof(struct TreeNode));
 	in->father = last;
 	in->Data = S;
 	in->Left = NULL;
 	in->Right = NULL;
-
-	BT=NodeInserter(in);
-	InOrderTraversal(BT);
+	last->Left = in;
+	NodeInserter(in);
+	cout << "Traveling the tree with LevelOrder..." << endl;
+	cout << "Now the tree is: " << endl;
+	LevelOrderTraversal(BT);
 }
