@@ -15,25 +15,19 @@ struct  TreeNode
 	BinTree Right;
 };
 
-void NodeInserter(BinTree in) {
+BinTree NodeInserter(BinTree in) {
 	if (in) {
-		if (in->father->Data < in->Data)
-		{
-			BinTree inT = (BinTree)malloc(sizeof(struct TreeNode));
-			BinTree faT = (BinTree)malloc(sizeof(struct TreeNode));
-			inT->Data = in->Data;
-			inT->father = in->father;
-			inT->Left = in->Left;
-			inT->Right = in->Right;
-			faT->Data = in->father->Data;
-			faT->father = in->father->father;
-			faT->Left = in->father->Left;
-			faT->Right = in->father->Right;
-			in->father = inT;
-			in = faT;
-			NodeInserter(in->father);
+		if (in->father->Data < in->Data) {
+			BinTree tmp = (BinTree)malloc(sizeof(struct TreeNode));
+			tmp = in;
+			in = in->father;
+			tmp->father = tmp;
+			NodeInserter(in);
 		}
+		return in;
 	}
+	else
+		return NULL;
 }
 static int n=0;
 BinTree InOrderTraversal(BinTree BT) {
@@ -97,6 +91,7 @@ int main() {
 	in->Data = S;
 	in->Left = NULL;
 	in->Right = NULL;
-	NodeInserter(in);
+
+	BT=NodeInserter(in);
 	InOrderTraversal(BT);
 }
