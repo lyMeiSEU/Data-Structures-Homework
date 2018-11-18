@@ -38,7 +38,23 @@ public:
 		_InOrder(Root);
 		cout << endl;
 	}
+	int max(int a, int b) {
+		if (a > b) {
+			return a;
+		}
+		else
+			return b;
+	}
+	void Reset() {
+		_Reset(Root);
+	}
+	int Height() {
+		return _Height(Root);
+	}
 private:
+	void _Reset(PNode &pRoot) {
+		pRoot = NULL;
+	}
 	bool _Insert(PNode& pRoot, const T& data)
 	{
 		if (NULL == pRoot) {
@@ -107,6 +123,20 @@ private:
 			_InOrder(pRoot->Right);
 		}
 	}
+	int _Height(PNode pRoot)
+	{
+		int deepl = 1, deepr = 1;
+		PNode pRootl = pRoot, pRootr = pRoot;
+		while (pRootl) {
+			deepl++;
+			pRootl = pRootl->Left;
+		}
+		while (pRootr) {
+			deepr++;
+			pRootr = pRootr->Right;
+		}
+		return max(deepl, deepr);
+	}
 private:
 	PNode Root;
 };
@@ -114,17 +144,31 @@ void test() {
 	int arr[] = { 5, 3, 4, 1, 7, 8, 2, 6, 0, 9 };
 	BSTree<int> bs;
 	cout << "Making Tree..." << endl;
-	for (size_t i = 0; i < sizeof(arr) / sizeof(arr[0]); ++i)
-		bs.Insert(arr[i]);
-	bs.InOrder();
-	int S;
-	cout << "Input the Node you want to delete. " << endl;
-	cin >> S;
-	if (bs.Delete(S)) {
+	cout << "The Number N is from 100-10000, When it comes to 10000,it may take some times..." << endl;
+	int N=100;
+	for (int i = 0; i < 2; ++i) {
+		bs.Reset();
+		cout << "For the number " << N << endl;
+		for (size_t i = 0; i < N; ++i)
+			bs.Insert(rand() % N);
 		bs.InOrder();
+		cout << "The Deep of the Tree is " << bs.Height() << endl;
+		if (i == 0) {
+			N *= 5;
+		}
+		if (i == 1) {
+			N *= 2;
+		}
 	}
-	else
-		cout << "There is no this Node in the Tree, Be Careful!" << endl;
+	while (N <= 10000) {
+		bs.Reset();
+		cout << "For the number N = " << N << endl;
+		for (size_t i = 0; i < N; ++i)
+			bs.Insert(rand()%N);
+		bs.InOrder();
+		cout <<"The Deep of the Tree is "<< bs.Height() << endl;
+		N += 1000;
+	}
 }
 int main() {
 	test();
