@@ -1,115 +1,132 @@
+
 #include<iostream>
-#include<queue>
-#include<stack>
 using namespace std;
-
-#define ElementType int
-#define left 1
-#define right 0
-#define yes 1
-#define no 0
-typedef struct TreeNode *BinTree;
-typedef BinTree Position;
-struct  TreeNode
-{
-	ElementType Data;
-	BinTree Left;
-	BinTree Right;
+template<class T>
+struct BSTreeNode {
+	BSTreeNode<T>* Left;
+	BSTreeNode<T>* Right;
+	T Data;
+	BSTreeNode(const T& data)
+		: Left(NULL)
+		, Right(NULL)
+		, Data(data)
+	{}
 };
-
-BinTree deletNode(BinTree BT,BinTree next,int S,bool direction) {
-	if (BT&&next) {
-		if (direction == left) {
-			if (BT->Left->Data == S) {
-				BT->Left = deletNode(BT->Left,BT->Left->Left, S, left);
+template<class T>
+class BSTree {
+	typedef BSTreeNode<T> Node;
+	typedef Node* PNode;
+public:
+	BSTree()
+		: Root(NULL)
+	{}
+	bool Insert(const T& data)
+	{
+		return _Insert(Root, data);
+	}
+	PNode Find(const T& data)
+	{
+		_Find(Root, data);
+	}
+	bool Delete(const T& data)
+	{
+		return _Delete(Root, data);
+	}
+	void InOrder()
+	{
+		cout << "InOrder:";
+		_InOrder(Root);
+		cout << endl;
+	}
+private:
+	bool _Insert(PNode& pRoot, const T& data)
+	{
+		if (NULL == pRoot) {
+			pRoot = new Node(data);
+			return true;
+		}
+		else {
+			if (pRoot->Data == data)
+				return false;
+			else if (pRoot->Data > data)
+				return _Insert(pRoot->Left, data);
+			else
+				return _Insert(pRoot->Right, data);
+		}
+	}
+	PNode _Find(PNode pRoot, const T& data)
+	{
+		if (NULL == pRoot)
+			return NULL;
+		else {
+			if (data == pRoot->Data)
+				return pRoot;
+			else if (data > pRoot->Data)
+				return _Find(pRoot->Right, data);
+			else
+				return _Find(pRoot->Left, data);
+		}
+	}
+	bool _Delete(PNode& pRoot, const T& data)
+	{
+		if (NULL == pRoot)
+			return false;
+		else {
+			if (data > pRoot->Data)
+				return _Delete(pRoot->Right, data);
+			else if (data < pRoot->Data)
+				return _Delete(pRoot->Left, data);
+			else {
+				PNode pDel = pRoot;
+				if (pRoot->Right == NULL) {
+					pRoot = pRoot->Left;
+					delete pDel;
+					return true;
+				}
+				else if (pRoot->Left == NULL) {
+					pRoot = pRoot->Right;
+					delete pDel;
+					return true;
+				}
+				else {
+					pDel = pRoot->Right;
+					while (pDel->Left) {
+						pDel = pDel->Left;
+					}
+					pRoot->Data = pDel->Data;
+					return _Delete(pRoot->Right, pDel->Data);
+				}
 			}
 		}
-		if (direction == right) {
-			if (BT->Right ->Data == S) {
-				BT->Right = deletNode(BT->Right, BT->Right->Right, S, left);
-			}
-		}
-		return next;
 	}
-	else if (BT) {
-		if (BT->Data == S) {
-			BT = NULL;
+	void _InOrder(PNode pRoot)
+	{
+		if (pRoot) {
+			_InOrder(pRoot->Left);
+			cout << pRoot->Data << " ";
+			_InOrder(pRoot->Right);
 		}
-		return NULL;
 	}
-	else {
-		BT = NULL;
-		return NULL;
-	}
-}
-
-BinTree DoubleForkTreeBulider(int N,bool direction) {
-	if (N > 0) {
-		if (direction == left) {
-			BinTree tmp = (BinTree)malloc(sizeof(struct TreeNode));
-			tmp->Data = N*2;
-			tmp->Right = NULL;
-			tmp->Left=DoubleForkTreeBulider(N - 1, left);
-			return tmp;
-		}
-		else if (direction == right) {
-			BinTree tmp = (BinTree)malloc(sizeof(struct TreeNode));
-			tmp->Data = N*2-1;
-			tmp->Left = NULL;
-			tmp->Right=DoubleForkTreeBulider(N - 1, right);
-			return tmp;
-		}
+private:
+	PNode Root;
+};
+void test() {
+	int arr[] = { 5, 3, 4, 1, 7, 8, 2, 6, 0, 9 };
+	BSTree<int> bs;
+	cout << "Making Tree..." << endl;
+	for (size_t i = 0; i < sizeof(arr) / sizeof(arr[0]); ++i)
+		bs.Insert(arr[i]);
+	bs.InOrder();
+	int S;
+	cout << "Input the Node you want to delete. " << endl;
+	cin >> S;
+	if (bs.Delete(S)) {
+		bs.InOrder();
 	}
 	else
-		return NULL;
+		cout << "There is no this Node in the Tree, Be Careful!" << endl;
 }
-
-void InOrderTraversal(BinTree BT) {
-	BinTree T = BT;
-	stack<BinTree>s;
-	while (T != NULL || s.size() != 0)
-	{
-		while (T != NULL) {
-			s.push(T);
-			cout << s.top()->Data << " ";
-			T = T->Left;
-		}
-		if (s.size() != 0)
-		{
-			T = s.top();
-			s.pop();
-			T = T->Right;
-		}
-	}
-}
-
 int main() {
-	BinTree BT = (BinTree)malloc(sizeof(struct TreeNode));
-	int N;
-	cout << "Input the Node number in the Tree" << endl;
-	cin >> N;
-	cout << "Buliding Tree..." << endl;/*
-										 1
-									   2   3
-									 4  5 6  7
-									...........
-									   */
-	BT->Data = N;
-	if (N % 2 == 0) {
-		BT->Left = DoubleForkTreeBulider(N  / 2, left);
-		BT->Right = DoubleForkTreeBulider((N / 2) - 1, right);
-	}
-	else {
-		BT->Left = DoubleForkTreeBulider((N - 1) / 2, left);
-		BT->Right = DoubleForkTreeBulider((N - 1) / 2, right);
-	}
-	InOrderTraversal(BT);
-	cout << endl;
-	int S;
-	cout << "Input the Node you want to delete" << endl;
-	cin >> S;
-	deletNode(BT->Left,BT->Left->Left, S, left);
-	deletNode(BT->Right,BT->Right->Right, S, right);
-	cout << "Traverseing the Tree in preorder without using recursive..." << endl;
-	InOrderTraversal(BT);
+	test();
+	return 0;
 }
