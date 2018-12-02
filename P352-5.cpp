@@ -1,5 +1,6 @@
 #include<iostream>
 #include<list>
+#include<queue>
 using namespace std;
 
 struct Node
@@ -53,6 +54,28 @@ public:
 			temp = temp->link;
 		}
 	}
+
+	virtual void BFS(int v) {
+		visited = new bool[n];
+		fill(visited, visited + n, false);
+		visited[v] = true;
+		queue<int>q;
+		q.push(v);
+		while (!q.empty()) {
+			v = q.front();
+			q.pop();
+			Node *temp = &HeadNode[v];
+			int w = 0;
+			while (temp != NULL) {
+				if (!visited[w]) {
+					DFS(w);
+				}
+				w++;
+				temp = temp->link;
+			}
+		}
+		delete[] visited;
+	}
 };
 
 int main() {
@@ -67,5 +90,7 @@ int main() {
 		G.Add(u, v);
 	}
 	cout << "Traveling the tree DFS()" << endl;
-	G.DFS(2);
+	G.DFS();
+	cout << "Traveling the tree BFS()" << endl;
+	G.BFS(5);
 }

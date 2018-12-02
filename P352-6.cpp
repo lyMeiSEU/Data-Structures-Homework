@@ -1,5 +1,6 @@
 #include<iostream>
 #include<list>
+#include<queue>
 using namespace std;
 
 struct Node
@@ -13,6 +14,7 @@ private:
 	Node *HeadNode;
 	bool *visited;
 	int n;
+	queue<int> DFSList;
 public:
 	Graph(const int vertices = 0) :n(vertices)
 	{
@@ -47,11 +49,13 @@ public:
 		int w = 0;
 		while (temp != NULL) {
 			if (!visited[w]) {
+				DFSList.push(temp->data);
 				DFS(w);
 			}
 			w++;
 			temp = temp->link;
 		}
+		cout << endl;
 	}
 };
 
@@ -66,6 +70,6 @@ int main() {
 		cin >> u>>v;
 		G.Add(u, v);
 	}
-	cout << "Traveling the tree DFS()" << endl;
-	G.DFS(2);
+	cout << "Traveling the tree DFS() and adding nodes intoDFSList." << endl;
+	G.DFS();
 }
