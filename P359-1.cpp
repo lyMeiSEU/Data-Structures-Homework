@@ -64,7 +64,7 @@ void Kruskal()
 		u = edges[i].begin; v = edges[i].end;
 		if (Find(u) != Find(v))
 		{
-			cout << u << v << edges[i].value << endl;
+			cout << u <<" "<< v <<" "<< edges[i].value << endl;
 			sumweight += edges[i].value; num++;
 			Union(u, v);
 		}
@@ -76,14 +76,15 @@ int main()
 {
 	int begin, end, value; //边的起点和终点及权值
 	cout << "Input the number of Vertes and Edges" << endl;
-	cin >> vertex >> edge; 
+	cin >> vertex >> edge;
+	cout << "Input the begin and end of edge, Input the value of the edge" << endl;
 	for (int i = 0; i < edge; i++)
 	{
-		cout << "Input the begin and end of edge, Input the value of the edge" << endl;
 		cin>> begin >> end >> value; //读入边的起点和终点
 		edges[i].begin = begin; edges[i].end = end; edges[i].value = value;
 	}
 	sort(edges, edges + edge, cmp);
+	cout << endl;
 	Kruskal();
 	return 0;
 }
