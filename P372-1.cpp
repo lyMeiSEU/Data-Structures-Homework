@@ -37,7 +37,7 @@ void ShortestPath(const int n, const int v) {
 int main() {
 	fill(s, s + MAX, false);
 	fill(dist, dist + MAX, 0);
-	cout << "Input the edges. (Like: u,v,w)" << endl;
+	cout << "Input the edges.(Single source path, without negative number) (Like: u,v,w)" << endl;
 	cout << "Please end with -1" << endl;
 	int u, v, w;
 	while (true) {
