@@ -38,12 +38,22 @@ void Adjust(T*a, const int root, const int n) {
 
 template<class T>
 void HeapSort(T*a, const int n) {
+	cout << "第一次FOR循环" << endl;
 	for (int i = n / 2; i >= 1; --i) {
 		Adjust(a, i, n);
+		for (int i = 0; i < 11; ++i) {
+			cout << a[i] << " ";
+		}
+		cout << endl;
 	}
+	cout << "第二次FOR循环" << endl;
 	for (int i = n - 1; i >= 1; --i) {
 		swap(a[1], a[i + 1]);
 		Adjust(a, 1, i);
+		for (int i = 0; i < 11; ++i) {
+			cout << a[i] << " ";
+		}
+		cout << endl;
 	}
 }
 
