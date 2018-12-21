@@ -10,13 +10,8 @@ void Insert(const T& e, T *a, int i) {
 		a[i + 1] = a[i];
 		i--;
 	}
-	counter++;
-	cout << "µÚ" << counter << "´Î:";
 	a[i + 1] = e;
-	for (int i = 0; i < 11; ++i) {
-		cout << a[i] << " ";
-	}
-	cout << endl;
+	
 }
 
 template <class T>
@@ -24,15 +19,21 @@ void InsertionSort(T*a, const int n) {
 	for (int j = 2; j <= n; j++) {
 		T temp = a[j];
 		Insert(temp, a, j - 1);
+		counter++;
+		cout << "ç¬¬" << counter << "æ¬¡:";
+		for (int i = 0; i < 11; ++i) {
+			cout << a[i] << " ";
+		}
+		cout << endl;
 	}
 }
 
 int main() {
 	int a[] = { 12,2,16,30,8,28,4,10,20,6,18 };
-	cout << "³õÊ¼Öµ:";
+	cout << "åˆå§‹å€¼:";
 	for (int i = 0; i < 11; ++i) {
 		cout << a[i] << " ";
 	}
 	cout << endl;
-	InsertionSort(a, 11);
+	InsertionSort(a, 10);
 }
